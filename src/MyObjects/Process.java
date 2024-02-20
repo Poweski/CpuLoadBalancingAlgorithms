@@ -34,7 +34,6 @@ public class Process {
     public int getExecutionTimeLeft() {
         return executionTimeLeft;
     }
-
     public int getCPUID() {
         return cpuID;
     }

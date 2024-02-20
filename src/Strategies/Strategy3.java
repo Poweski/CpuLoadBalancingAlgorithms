@@ -22,8 +22,7 @@ public class Strategy3 implements Strategy {
     private int counter = 0;
 
     public Strategy3(ArrayList<CPU> listOfCPUs, ArrayList<Process> listOfProcesses,
-                     int P, int R, int PERCENTAGE_OF_MAX_CPU_LOAD_RELEASED)
-    {
+                     int P, int R, int PERCENTAGE_OF_MAX_CPU_LOAD_RELEASED) {
         this.listOfCPUs = listOfCPUs;
         this.listOfProcesses = listOfProcesses;
         listOfDeadProcesses = new ArrayList<>();
@@ -35,8 +34,8 @@ public class Strategy3 implements Strategy {
         generator = new Random();
     }
 
-    public void run()
-    {
+    public void run() {
+
         int numberOfProcesses = listOfProcesses.size();
         int startingCpuID;
         int requestedCpuID;
@@ -45,144 +44,136 @@ public class Strategy3 implements Strategy {
         boolean newCpuIsNeeded;
         boolean processWasNotAdded;
 
-        while (listOfDeadProcesses.size() < numberOfProcesses)
-        {
-            if (listOfProcesses.size() > 0)
-            {
-                Process currentProcess = listOfProcesses.remove(0);
+        while (listOfDeadProcesses.size() < numberOfProcesses) {
+            if (!listOfProcesses.isEmpty()) {
+
+                Process currentProcess = listOfProcesses.removeFirst();
                 startingCpuID = currentProcess.getCPUID();
                 requestedCpuID = startingCpuID;
                 processWasNotSent = true;
                 newCpuWasNotFound = true;
                 processWasNotAdded = true;
 
-                while (currentProcess.getAppearTime() > globalTime)
+                while (currentProcess.getAppearTime() > globalTime) {
                     increaseGlobalTime();
+                }
 
                 newCpuIsNeeded = listOfCPUs.get(startingCpuID).getTotalDemand() >= P;
 
-                while (processWasNotSent && newCpuIsNeeded)
-                {
-                    while (newCpuWasNotFound)
-                    {
+                while (processWasNotSent && newCpuIsNeeded) {
+                    while (newCpuWasNotFound) {
                         requestedCpuID = generator.nextInt(listOfCPUs.size());
-
-                        if (requestedCpuID != startingCpuID)
+                        if (requestedCpuID != startingCpuID) {
                             newCpuWasNotFound = false;
+                        }
                     }
 
                     int requestedCPUDemand = listOfCPUs.get(requestedCpuID).getTotalDemand();
 
-                    if (requestedCPUDemand < P && requestedCPUDemand + currentProcess.getDemand() <= 100)
-                    {
+                    if (requestedCPUDemand < P && requestedCPUDemand + currentProcess.getDemand() <= 100) {
                         listOfCPUs.get(requestedCpuID).addNewProcess(currentProcess);
 
-                        if (listOfCPUs.get(requestedCpuID).getTotalDemand() < R)
+                        if (listOfCPUs.get(requestedCpuID).getTotalDemand() < R) {
                             offloadOtherCPUs(requestedCpuID);
+                        }
 
                         migrationCounter++;
                         processWasNotSent = false;
                     }
 
-                    if (processWasNotSent)
+                    if (processWasNotSent) {
                         increaseGlobalTime();
+                    }
 
                     newCpuWasNotFound = true;
                     demandRequestCounter++;
                 }
 
-                if (processWasNotSent)
-                {
-                    while (processWasNotAdded)
-                    {
-                        if (listOfCPUs.get(startingCpuID).getTotalDemand() + currentProcess.getDemand() <= 100)
-                        {
+                if (processWasNotSent) {
+                    while (processWasNotAdded) {
+                        if (listOfCPUs.get(startingCpuID).getTotalDemand() + currentProcess.getDemand() <= 100) {
                             listOfCPUs.get(startingCpuID).addNewProcess(currentProcess);
                             processWasNotAdded = false;
                         }
-                        else increaseGlobalTime();
+                        else {
+                            increaseGlobalTime();
+                        }
                     }
 
-                    if (listOfCPUs.get(startingCpuID).getTotalDemand() < R)
+                    if (listOfCPUs.get(startingCpuID).getTotalDemand() < R) {
                         offloadOtherCPUs(startingCpuID);
+                    }
                 }
             }
             else increaseGlobalTime();
         }
     }
 
-    private void increaseGlobalTime()
-    {
+    private void increaseGlobalTime() {
+
         ArrayList<Process> processesToRemove;
-
         LinkedList<Integer> listOfDemand = new LinkedList<>();
-
         globalTime++;
 
-        for (CPU currentCPU : listOfCPUs)
-        {
-            if (currentCPU.getListOfProcesses().size() != 0)
-            {
+        for (CPU currentCPU : listOfCPUs) {
+            if (!currentCPU.getListOfProcesses().isEmpty()) {
+
                 processesToRemove = new ArrayList<>();
 
-                for (Process proc : currentCPU.getListOfProcesses())
-                {
-                    if (proc.getExecutionTimeLeft() == 0)
-                    {
-                        processesToRemove.add(proc);
-                        listOfDeadProcesses.add(proc);
+                for (Process process : currentCPU.getListOfProcesses()) {
+                    if (process.getExecutionTimeLeft() == 0) {
+                        processesToRemove.add(process);
+                        listOfDeadProcesses.add(process);
                     }
-                    else
-                        proc.changeExecutionTimeLeft(-1);
+                    else {
+                        process.changeExecutionTimeLeft(-1);
+                    }
                 }
 
-                if (processesToRemove.size() != 0)
-                    for (Process processToRemove : processesToRemove)
+                if (!processesToRemove.isEmpty()) {
+                    for (Process processToRemove : processesToRemove) {
                         currentCPU.removeProcess(processToRemove);
+                    }
+                }
             }
 
             listOfDemand.add(currentCPU.getTotalDemand());
         }
 
-        if (counter % 20 == 0)
+        if (counter % 20 == 0) {
             listOfListsOfDemand.add(listOfDemand);
+        }
         counter++;
     }
 
-    private void offloadOtherCPUs(int startingCpuID)
-    {
+    private void offloadOtherCPUs(int startingCpuID) {
+
         CPU startingCPU = listOfCPUs.get(startingCpuID);
         int freeSpace = P - startingCPU.getTotalDemand();
 
-        for (CPU currentCPU : listOfCPUs)
-        {
-            if (currentCPU != startingCPU)
-            {
-                if (currentCPU.getTotalDemand() > P)
-                {
+        for (CPU currentCPU : listOfCPUs) {
+            if (currentCPU != startingCPU) {
+                if (currentCPU.getTotalDemand() > P) {
+
                     int migratedDemand = 0;
                     int highestDemand = currentCPU.getProcessWithHighestDemand().getDemand();
                     int lowestDemand = currentCPU.getProcessWithLowestDemand().getDemand();
 
-                    while (freeSpace - highestDemand > 0 && migratedDemand < PERCENTAGE_OF_MAX_CPU_LOAD_RELEASED)
-                    {
+                    while (freeSpace - highestDemand > 0 && migratedDemand < PERCENTAGE_OF_MAX_CPU_LOAD_RELEASED) {
                         Process processToMigrate = currentCPU.removeProcessWithHighestDemand();
                         startingCPU.addNewProcess(processToMigrate);
                         freeSpace -= highestDemand;
                         migratedDemand += highestDemand;
                         migrationCounter++;
-
                         highestDemand = currentCPU.getProcessWithHighestDemand().getDemand();
                     }
 
-                    while (freeSpace - lowestDemand > 0 && migratedDemand < PERCENTAGE_OF_MAX_CPU_LOAD_RELEASED)
-                    {
+                    while (freeSpace - lowestDemand > 0 && migratedDemand < PERCENTAGE_OF_MAX_CPU_LOAD_RELEASED) {
                         Process processToMigrate = currentCPU.removeProcessWithLowestDemand();
                         startingCPU.addNewProcess(processToMigrate);
                         freeSpace -= lowestDemand;
                         migratedDemand += lowestDemand;
                         migrationCounter++;
-
                         lowestDemand = currentCPU.getProcessWithLowestDemand().getDemand();
                     }
 
@@ -197,12 +188,15 @@ public class Strategy3 implements Strategy {
     public int getDemandRequestCounter() {
         return demandRequestCounter;
     }
+
     public int getMigrationCounter() {
         return migrationCounter;
     }
+
     public int getGlobalTime() {
         return globalTime;
     }
+
     public LinkedList<LinkedList<Integer>> getListOfListsOfDemand() {
         return listOfListsOfDemand;
     }

@@ -31,8 +31,8 @@ public class Strategy1 implements Strategy {
         generator = new Random();
     }
 
-    public void run()
-    {
+    public void run() {
+
         int numberOfProcesses = listOfProcesses.size();
         int startingCpuID;
         int requestedCpuID;
@@ -42,11 +42,11 @@ public class Strategy1 implements Strategy {
         boolean newCpuWasNotFound;
         boolean processWasNotAdded;
 
-        while (listOfDeadProcesses.size() < numberOfProcesses)
-        {
-            if (listOfProcesses.size() > 0)
-            {
-                Process currentProcess = listOfProcesses.remove(0);
+        while (listOfDeadProcesses.size() < numberOfProcesses) {
+
+            if (!listOfProcesses.isEmpty()) {
+
+                Process currentProcess = listOfProcesses.removeFirst();
                 startingCpuID = currentProcess.getCPUID();
                 requestedCpuID = startingCpuID;
                 processWasNotSent = true;
@@ -54,23 +54,21 @@ public class Strategy1 implements Strategy {
                 processWasNotAdded = true;
                 attempts = 0;
 
-                while (currentProcess.getAppearTime() > globalTime)
+                while (currentProcess.getAppearTime() > globalTime) {
                     increaseGlobalTime();
+                }
 
-                while (processWasNotSent && attempts < Z)
-                {
-                    while (newCpuWasNotFound)
-                    {
+                while (processWasNotSent && attempts < Z) {
+                    while (newCpuWasNotFound) {
                         requestedCpuID = generator.nextInt(listOfCPUs.size()) ;
-
-                        if (requestedCpuID != startingCpuID)
+                        if (requestedCpuID != startingCpuID) {
                             newCpuWasNotFound = false;
+                        }
                     }
 
                     int requestedCPUDemand = listOfCPUs.get(requestedCpuID).getTotalDemand();
 
-                    if (requestedCPUDemand < P && requestedCPUDemand + currentProcess.getDemand() <= 100)
-                    {
+                    if (requestedCPUDemand < P && requestedCPUDemand + currentProcess.getDemand() <= 100) {
                         listOfCPUs.get(requestedCpuID).addNewProcess(currentProcess);
                         migrationCounter++;
                         processWasNotSent = false;
@@ -81,70 +79,72 @@ public class Strategy1 implements Strategy {
                     attempts++;
                 }
 
-                if (processWasNotSent)
-                {
-                    while (processWasNotAdded)
-                    {
-                        if (listOfCPUs.get(startingCpuID).getTotalDemand() + currentProcess.getDemand() <= 100)
-                        {
+                if (processWasNotSent) {
+                    while (processWasNotAdded) {
+                        if (listOfCPUs.get(startingCpuID).getTotalDemand() + currentProcess.getDemand() <= 100) {
                             listOfCPUs.get(startingCpuID).addNewProcess(currentProcess);
                             processWasNotAdded = false;
                         }
-                        else increaseGlobalTime();
+                        else {
+                            increaseGlobalTime();
+                        }
                     }
                 }
             }
-            else increaseGlobalTime();
+            else {
+                increaseGlobalTime();
+            }
         }
     }
 
-    private void increaseGlobalTime()
-    {
+    private void increaseGlobalTime() {
+
         ArrayList<Process> processesToRemove;
-
         LinkedList<Integer> listOfDemand = new LinkedList<>();
-
         globalTime++;
 
-        for (CPU currentCPU : listOfCPUs)
-        {
-            if (currentCPU.getListOfProcesses().size() != 0)
-            {
+        for (CPU currentCPU : listOfCPUs) {
+            if (!currentCPU.getListOfProcesses().isEmpty()) {
+
                 processesToRemove = new ArrayList<>();
 
-                for (Process proc : currentCPU.getListOfProcesses())
-                {
-                    if (proc.getExecutionTimeLeft() == 0)
-                    {
-                        processesToRemove.add(proc);
-                        listOfDeadProcesses.add(proc);
+                for (Process process : currentCPU.getListOfProcesses()) {
+                    if (process.getExecutionTimeLeft() == 0) {
+                        processesToRemove.add(process);
+                        listOfDeadProcesses.add(process);
                     }
-
-                    else
-                        proc.changeExecutionTimeLeft(-1);
+                    else {
+                        process.changeExecutionTimeLeft(-1);
+                    }
                 }
 
-                if (processesToRemove.size() != 0)
-                    for (Process processToRemove : processesToRemove)
+                if (!processesToRemove.isEmpty()) {
+                    for (Process processToRemove : processesToRemove) {
                         currentCPU.removeProcess(processToRemove);
+                    }
+                }
             }
 
             listOfDemand.add(currentCPU.getTotalDemand());
         }
-        if (counter % 20 == 0)
+        if (counter % 20 == 0) {
             listOfListsOfDemand.add(listOfDemand);
+        }
         counter++;
     }
 
     public int getDemandRequestCounter() {
         return demandRequestCounter;
     }
+
     public int getMigrationCounter() {
         return migrationCounter;
     }
+
     public int getGlobalTime() {
         return globalTime;
     }
+
     public LinkedList<LinkedList<Integer>> getListOfListsOfDemand() {
         return listOfListsOfDemand;
     }

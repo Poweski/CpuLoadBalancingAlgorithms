@@ -73,34 +73,37 @@ public class CPU {
     public Process getProcessWithHighestDemand() {
         int highestDemand = 0;
         Process processWithHighestDemand = null;
-        for (Process process : listOfProcesses)
+        for (Process process : listOfProcesses) {
             if (process.getDemand() > highestDemand) {
                 highestDemand = process.getDemand();
                 processWithHighestDemand = process;
             }
+        }
         return processWithHighestDemand;
     }
 
     public Process getProcessWithLowestDemand() {
         int lowestDemand = 100;
         Process processWithLowestDemand = null;
-        for (Process process : listOfProcesses)
+        for (Process process : listOfProcesses) {
             if (process.getDemand() < lowestDemand) {
                 lowestDemand = process.getDemand();
                 processWithLowestDemand = process;
             }
+        }
         return processWithLowestDemand;
     }
 
     private void addWaitingProcess() {
-        if (listOfWaitingProcesses.size() != 0) {
+        if (!listOfWaitingProcesses.isEmpty()) {
             ArrayList<Process> processesToAdd = new ArrayList<>();
             int spaceLeft = 100 - totalDemand;
-            for (Process waitingProcess : listOfWaitingProcesses)
+            for (Process waitingProcess : listOfWaitingProcesses) {
                 if (waitingProcess.getDemand() <= spaceLeft) {
                     processesToAdd.add(waitingProcess);
                     spaceLeft -= waitingProcess.getDemand();
                 }
+            }
             for (Process processToAdd : processesToAdd) {
                 listOfWaitingProcesses.remove(processToAdd);
                 addNewProcess(processToAdd);

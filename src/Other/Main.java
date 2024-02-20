@@ -8,10 +8,10 @@ import java.util.ArrayList;
 
 public class Main {
 
-    static final int N = 100; // Liczba procesorów
-    static final int P = 90; // Próg maksymalny obciążenia procesora
-    static final int R = 30; // Próg minimalny obciążenia procesora
-    static final int Z = 20; // Maksymalna liczba zapytań
+    static final int N = 100; // Number of processors
+    static final int P = 90; // Maximum CPU load threshold
+    static final int R = 30; // Minimum CPU load threshold
+    static final int Z = 20; // Maximum number of queries
 
     static final int MIN_PROCESS_DEMAND = 5;
     static final int MAX_PROCESS_DEMAND = 10;
@@ -22,7 +22,7 @@ public class Main {
 
     static final int PERCENTAGE_OF_MAX_CPU_LOAD_RELEASED = 40;
     static final int DEGREE_OF_NUMBER_OF_PROCESSES = 100;
-    // Liczba określająca ilość procesów, na podstawie wielokrotności liczby procesorów
+    // A number specifying the number of processes, based on a multiple of the number of processors
 
 
     public static void main(String[] args) {

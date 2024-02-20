@@ -6,8 +6,8 @@ import java.util.LinkedList;
 
 public class ResultsCollector {
 
-    public void collectResults(Strategy strategy)
-    {
+    public void collectResults(Strategy strategy) {
+
         int queries = strategy.getDemandRequestCounter();
         int migrations = strategy.getMigrationCounter();
         int time = strategy.getGlobalTime();
@@ -23,13 +23,13 @@ public class ResultsCollector {
         System.out.println("Migrations: " + migrations);
     }
 
-    public double[] calculate(LinkedList<LinkedList<Integer>> listOfLists)
-    {
+    public double[] calculate(LinkedList<LinkedList<Integer>> listOfLists) {
+
         LinkedList<Double> averages = new LinkedList<>();
         LinkedList<Double> deviations = new LinkedList<>();
 
-        for (LinkedList<Integer> list : listOfLists)
-        {
+        for (LinkedList<Integer> list : listOfLists) {
+
             double average = calculateAverage(list);
             double deviation = calculateStandardDeviation(list);
 
@@ -46,32 +46,26 @@ public class ResultsCollector {
 
     public double calculateAverage(LinkedList<Integer> list) {
         int sum = 0;
-        for (int num : list)
+        for (int num : list) {
             sum += num;
+        }
         return (double) sum / list.size();
     }
 
     public double calculateAverageDouble(LinkedList<Double> list) {
         double sum = 0;
-        for (double num : list)
+        for (double num : list) {
             sum += num;
+        }
         return sum / list.size();
     }
 
     public double calculateStandardDeviation(LinkedList<Integer> list) {
         double average = calculateAverage(list);
         double sum = 0;
-        for (int num : list)
+        for (int num : list) {
             sum += Math.pow(num - average, 2);
-        double variance = sum / (list.size() - 1);
-        return Math.sqrt(variance);
-    }
-
-    public double calculateStandardDeviationDouble(LinkedList<Double> list) {
-        double average = calculateAverageDouble(list);
-        double sum = 0;
-        for (double num : list)
-            sum += Math.pow(num - average, 2);
+        }
         double variance = sum / (list.size() - 1);
         return Math.sqrt(variance);
     }
