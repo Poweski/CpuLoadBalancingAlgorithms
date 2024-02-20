@@ -1,31 +1,30 @@
 # CpuLoadBalancingAlgorithms
-Fifth project for operating systems.
 
-Symulacja rozproszonego algorytmu równoważącego obciążenie procesorów. W systemie pracuje N identycznych
-procesorów. Na każdym z nich pojawiają się nowe zadania (procesy), z RÓŻNĄ częstotliwością i RÓŻNYMI
-wymaganiami (każdy proces wymaga określonego, różnego, udziału w mocy obliczeniowej procesora, np ~3%).
-Zasymulować poniższe strategie przydziału:  
+Simulation of a distributed processor load balancing algorithm. There are N identical ones working in the system
+processors. New tasks (processes) appear on each of them, with DIFFERENT frequencies and DIFFERENT
+requirements (each process requires a specific, different share of the processor's computing power, e.g. ~3%).
+Simulate the following allocation strategies:
 
-Na procesorze x pojawia się zadanie. Następnie:  
+A task appears on processor x. Then:
 
-Strategia 1.:   
-x pyta losowo wybrany procesor y o aktualne obciążenie. Jeśli jest mniejsze od progu p, proces jest tam
-wysyłany. Jeśli nie, losujemy i pytamy następny, próbując co najwyżej z razy. Jeśli wszystkie wylosowane są
-obciążone powyżej progu p, proces wykonuje się na x.  
+### Strategy 1
+x asks a randomly selected processor y about the current load. If it is less than the threshold p, the process is there
+sent. If not, we draw and ask the next one, trying at most 10 times. If all are drawn
+loaded above the threshold p, the process is executed on x.
 
-Strategia 2.:   
-Jeśli obciążenie x przekracza wartość progową p, proces zostaje wysłany na losowo wybrany procesor y
-o obciążeniu mniejszym od p (jeśli wylosowany y ma obciążenie>p, losowanie powtarza się do skutku). Jeśli nie
-przekracza - proces wykonuje się na x.  
+### Strategy 2
+If the load x exceeds the threshold p, the process is sent to a randomly selected processor y
+with a load less than p (if the drawn y has a load>p, the drawing is repeated until successful). if not
+exceeds - the process is executed on x.
 
-Strategia 3.:   
-Jak wyżej, z tym że procesory o obciążeniu mniejszym od minimalnego progu r pytają losowo wybrane
-procesory i jeśli obciążenie zapytanego jest większe od p, pytający przejmuje część jego zadań (założyć jaką).
+### Strategy 3
+As above, except that processors with a load lower than the minimum threshold r ask randomly selected ones
+processors and if the load of the questioner is greater than p, the questioner takes over some of his tasks (assume which).
 
-Wskazówki:  
-Przeprowadzić symulację strategii 1,2,3 dla N=ok.50-100 i długiej serii zadań do wykonania (parametry dobrać
-samodzielnie, tak by całość zadziałała:). W każdym przypadku podać jako wynik:  
-1. Średnie obciążenie procesorów (zdecydować, rozsądnie, jak będzie obliczane).  
-2. Średnie odchylenie od wartości z pkt. 1 wyżej.  
-3. Ilość zapytań o obciążenie oraz migracji (przemieszczeń) procesów.  
-4. Użytkownik powinien mieć możliwość podania (zmiany) wartości p,r,z,N. 
+### Tips:
+Carry out a simulation of strategies 1,2,3 for N=approx. 50-100 and a long series of tasks to be performed (select the parameters
+independently, so that everything works :). In each case, report as the result:
+1. Average load on processors (decide wisely how it will be calculated).
+2. Average deviation from the value in point 1 above.
+3. Number of load queries and process migrations (relocations).
+4. The user should be able to provide (change) the value of p,r,z,N.
